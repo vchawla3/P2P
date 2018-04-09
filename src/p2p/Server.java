@@ -75,8 +75,8 @@ public class Server implements Runnable {
 					case "LOOKUP":
 						//but only add/lookup use title
 						//add title
-						fullreq += in.readLine() + "\n";
-						String response = handleLookup(fullreq);
+						String titleLine = in.readLine();
+						String response = handleLookup(cmdLine, hostLine, portLine, titleLine);;
 
 						//send the response to the peer
 						pstream.println(response);
@@ -149,8 +149,62 @@ public class Server implements Runnable {
 		return "P2P-CI/1.0 200 OK\n" + "RFC" + type + " " + title + " " + host + " " + port + "\nEOF"
 	}
 
-	public String handleLookup(String req) {
+	public String handleLookup(String cmdLine, String hostLine, String portLine, String titleLine) {
+		//request looks like...
+		//LOOKUP RFC 3457 P2P-CI/1.0
+		//Host: thishost.csc.ncsu.edu
+		//Port: 5678
+		//Title: Requirements for IPsec Remote Access Scenarios 
+		String host, title, port;
+		int type;
 
+		//Check the cmd line for errors
+		String cmdsplit = cmdLine.split(" ");
+		if (cmdsplit[3].equals("P2P-CI/1.0")) {
+			type = Integer.parseInt(cmdsplit[2]);
+		} else {
+			return badRequest();
+		}
+
+		//Check the host line for errors
+		String hostsplit = hostLine.split(" ");
+		if (hostsplit[0].equals("Host:")) {
+			host = hostsplit[1];
+		} else {
+			return badRequest();
+		}
+
+		//Check the port line for errors
+		String postsplit = portLine.split(" ");
+		if (postsplit[0].equals("Port:")) {
+			port = postsplit[1];
+		} else {
+			return badRequest();
+		}
+
+		//Check the title line for errors
+		String titlesplit = titleLine.split(": ");
+		if (titlesplit[0].equals("Title")) {
+			title = titlesplit[1];
+		} else {
+			return badRequest();
+		}
+
+		String response = "P2P-CI/1.0 200 OK\n";
+		//No errors so now look for Peers's with the same RFC num and Title
+		for (RFC rfc: rfcs) {
+		//for each RFC, is it the same one from the request
+			if (rfc.type == type && rfc.title.equals(title)) {
+				//for the correct, RFC, which peers have it!!
+				for(Peer peer: peers) {
+					if(rfc.host.equals(peer.host)) {
+						response += "RFC " + rfc.num + " " + rfc.title + " " + peer.hostname + " " + peer.port + "\n";
+					}
+				}
+				
+			}
+		}
+		return response;
 	}
 
 	public String handleList(String req) {
