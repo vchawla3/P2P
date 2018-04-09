@@ -12,11 +12,10 @@ public class Server implements Runnable {
 		this.csocket = csocket;
 	}
 
-
 	public static void main(String args[]) {
 		try {
 			ServerSocket ssock = new ServerSocket(7734);
-			System.out.println("Listening on port 7731");
+			System.out.println("Listening on port 7734");
 
 			while (true) {
 				Socket sock = ssock.accept();
@@ -34,10 +33,12 @@ public class Server implements Runnable {
 
 	//Each client is now given this thread on the server
 	public void run() {
+		BufferedReader in;
+		PrintStream pstream;
 		try {
 			//DataInputStream dis= new DataInputStream(csocket.getInputStream());
-			BufferedReader in = new BufferedReader(new InputStreamReader(csocket.getInputStream()));
-			PrintStream pstream = new PrintStream(csocket.getOutputStream())
+			in = new BufferedReader(new InputStreamReader(csocket.getInputStream()));
+			pstream = new PrintStream(csocket.getOutputStream());
 
 			String host = in.readLine();
 			int port = Integer.parseInt(in.readLine());
@@ -59,14 +60,14 @@ public class Server implements Runnable {
 				String hostLine = in.readLine();
 				//add port
 				String portLine = in.readLine();
-
+				String titleLine, response;
 				switch(cmd) 
 				{
 					case "ADD":
 						//but only add/lookup use title
 						//add title
-						String titleLine = in.readLine();
-						String response = handleAddRFC(cmdLine, hostLine, portLine, titleLine);
+						titleLine = in.readLine();
+						response = handleAddRFC(cmdLine, hostLine, portLine, titleLine);
 						
 						//send the response to the peer
 						pstream.println(response);
@@ -75,15 +76,16 @@ public class Server implements Runnable {
 					case "LOOKUP":
 						//but only add/lookup use title
 						//add title
-						String titleLine = in.readLine();
-						String response = handleLookup(cmdLine, hostLine, portLine, titleLine);;
+						titleLine = in.readLine();
+						response = handleLookup(cmdLine, hostLine, portLine, titleLine);
 
 						//send the response to the peer
 						pstream.println(response);
 						break;
 					
 					case "LIST":
-						String response = handleList(fullreq)
+						response = handleList(cmdLine, hostLine, portLine);
+						
 						//send the response to the peer
 						pstream.println(response);
 						break;
@@ -94,11 +96,18 @@ public class Server implements Runnable {
 						break;
 				}
 			}
-			pstream.close();
-         	csocket.close();
+			//pstream.close();
 		}
 		catch (IOException ex) {
 			System.out.println(ex.getMessage());
+		}
+		finally {
+			try {
+				csocket.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+         			
 		}
 	}
 
@@ -112,7 +121,7 @@ public class Server implements Runnable {
 		int type;
 
 		//Check the cmd line for errors
-		String cmdsplit = cmdLine.split(" ");
+		String[] cmdsplit = cmdLine.split(" ");
 		if (cmdsplit[3].equals("P2P-CI/1.0")) {
 			type = Integer.parseInt(cmdsplit[2]);
 		} else {
@@ -120,7 +129,7 @@ public class Server implements Runnable {
 		}
 
 		//Check the host line for errors
-		String hostsplit = hostLine.split(" ");
+		String[] hostsplit = hostLine.split(" ");
 		if (hostsplit[0].equals("Host:")) {
 			host = hostsplit[1];
 		} else {
@@ -128,7 +137,7 @@ public class Server implements Runnable {
 		}
 
 		//Check the port line for errors
-		String postsplit = portLine.split(" ");
+		String[] postsplit = portLine.split(" ");
 		if (postsplit[0].equals("Port:")) {
 			port = postsplit[1];
 		} else {
@@ -136,7 +145,7 @@ public class Server implements Runnable {
 		}
 
 		//Check the title line for errors
-		String titlesplit = titleLine.split(": ");
+		String[] titlesplit = titleLine.split(": ");
 		if (titlesplit[0].equals("Title")) {
 			title = titlesplit[1];
 		} else {
@@ -146,7 +155,7 @@ public class Server implements Runnable {
 		//No errors up to here, so now add the rfc to master index and send back 200 OK response
 		RFC r = new RFC(type, title, host);
 		rfcs.add(r);
-		return "P2P-CI/1.0 200 OK\n" + "RFC" + type + " " + title + " " + host + " " + port + "\nEOF"
+		return "P2P-CI/1.0 200 OK\n" + "RFC" + type + " " + title + " " + host + " " + port + "\n";
 	}
 
 	public String handleLookup(String cmdLine, String hostLine, String portLine, String titleLine) {
@@ -159,7 +168,7 @@ public class Server implements Runnable {
 		int type;
 
 		//Check the cmd line for errors
-		String cmdsplit = cmdLine.split(" ");
+		String[] cmdsplit = cmdLine.split(" ");
 		if (cmdsplit[3].equals("P2P-CI/1.0")) {
 			type = Integer.parseInt(cmdsplit[2]);
 		} else {
@@ -167,7 +176,7 @@ public class Server implements Runnable {
 		}
 
 		//Check the host line for errors
-		String hostsplit = hostLine.split(" ");
+		String[] hostsplit = hostLine.split(" ");
 		if (hostsplit[0].equals("Host:")) {
 			host = hostsplit[1];
 		} else {
@@ -175,7 +184,7 @@ public class Server implements Runnable {
 		}
 
 		//Check the port line for errors
-		String postsplit = portLine.split(" ");
+		String[] postsplit = portLine.split(" ");
 		if (postsplit[0].equals("Port:")) {
 			port = postsplit[1];
 		} else {
@@ -183,7 +192,7 @@ public class Server implements Runnable {
 		}
 
 		//Check the title line for errors
-		String titlesplit = titleLine.split(": ");
+		String[] titlesplit = titleLine.split(": ");
 		if (titlesplit[0].equals("Title")) {
 			title = titlesplit[1];
 		} else {
@@ -198,16 +207,56 @@ public class Server implements Runnable {
 				//for the correct, RFC, which peers have it!!
 				for(Peer peer: peers) {
 					if(rfc.host.equals(peer.host)) {
-						response += "RFC " + rfc.num + " " + rfc.title + " " + peer.hostname + " " + peer.port + "\n";
+						response += "RFC " + rfc.type + " " + rfc.title + " " + peer.host + " " + peer.port + "\n";
 					}
 				}
 				
 			}
 		}
+
 		return response;
 	}
 
-	public String handleList(String req) {
+	public String handleList(String cmdLine, String hostLine, String portLine)  {
+		//request looks like...
+		// LIST ALL P2P-CI/1.0
+		// Host: thishost.csc.ncsu.edu
+		// Port: 5678 
+		String host, port;
+		
+		//Check the cmd line for errors
+		String[] cmdsplit = cmdLine.split(" ");
+		if (!cmdsplit[2].equals("P2P-CI/1.0")) {
+			return badRequest();
+		}
+
+		//Check the host line for errors
+		String[] hostsplit = hostLine.split(" ");
+		if (hostsplit[0].equals("Host:")) {
+			host = hostsplit[1];
+		} else {
+			return badRequest();
+		}
+
+		//Check the port line for errors
+		String[] postsplit = portLine.split(" ");
+		if (postsplit[0].equals("Port:")) {
+			port = postsplit[1];
+		} else {
+			return badRequest();
+		}
+
+		String response = "P2P-CI/1.0 200 OK\n";
+		//No errors so list all the RFC's in our list
+		for (RFC rfc: rfcs) {
+			for(Peer peer: peers) {
+				if(rfc.host.equals(peer.host)) {
+					response += "RFC " + rfc.type + " " + rfc.title + " " + peer.host + " " + peer.port + "\n";
+				}
+			}
+		}
+
+		return response;
 
 	}
 
