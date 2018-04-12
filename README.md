@@ -2,10 +2,10 @@
 Vaibhav Chawla (vchawla3)
 Shikar Sharma (ssharm29)
 
-
 ### Compilation Instructions
-Navigate to src/p2p/
-> javac *.java
+`cd src/p2p/`
+
+`javac *.java`
 
 ### Running the Program
 * Server: java Server
