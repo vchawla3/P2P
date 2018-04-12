@@ -4,8 +4,9 @@ Shikar Sharma (ssharm29)
 
 ### Compilation Instructions
 `cd src/p2p;`
+
 `javac *.java`
 
 ### Running the Program
-* Server: java Server
-* Client: java Client [clientip] [clientport]
+* Server: `java Server`
+* Client: `java Client [clientip] [clientport]`
