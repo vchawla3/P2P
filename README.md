@@ -8,4 +8,4 @@ Shikar Sharma (ssharm29)
 
 ### Running the Program
 * Server: `java Server`  
-* Client: `java Client [serversip] [serversport]`
+* Client: `java Client [serverIP] [serverPort]`
