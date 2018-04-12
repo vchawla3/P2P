@@ -5,6 +5,7 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.*;
 
 public class Client implements Runnable {
 
@@ -15,10 +16,10 @@ public class Client implements Runnable {
 		Scanner scan;
 		try {
 			//First establish connection with Server and setup streams
-			String host = args[0];
-			int port = Integer.parseInt(args[1]);
-			Socket serversocket = new Socket(host, port);
-			in = new BufferedReader(new InputStreamReader(csocserversocketket.getInputStream()));
+			String serverhost = args[0];
+			int serverport = Integer.parseInt(args[1]);
+			Socket serversocket = new Socket(serverhost, serverport);
+			in = new BufferedReader(new InputStreamReader(serversocket.getInputStream()));
 			pstream = new PrintStream(serversocket.getOutputStream());
 			System.out.println("Your Client Connected to Server");
 			// Setup scanner for user input
@@ -35,7 +36,7 @@ public class Client implements Runnable {
 			pstream.println(port);
 
 			//After successful connection, spawn thread to handle P2P incoming connections
-			ClientThread r = new ClientThread(port);
+			ClientThread r = new ClientThread(Integer.parseInt(port));
 			new Thread(r).start();
 
 			
@@ -52,7 +53,7 @@ public class Client implements Runnable {
 				System.out.println("4: GET ");
 				System.out.println("5: QUIT ");
 
-				String cmd = scan.nextInt();
+				int cmd = scan.nextInt();
 				String RFCnum = "";
 				String RFCtitle = "";
 				switch(cmd) {
@@ -64,7 +65,7 @@ public class Client implements Runnable {
 						RFCtitle = scan.nextLine();
 
 						request = "ADD RFC " + RFCnum + request + "Title: " + RFCtitle;
-						pstream.println(request)
+						pstream.println(request);
 						break;
 					case 2:
 						// Lookup command
@@ -74,12 +75,12 @@ public class Client implements Runnable {
 						RFCtitle = scan.nextLine();
 
 						request = "LOOKUP RFC " + RFCnum + request + "Title: " + RFCtitle;
-						pstream.println(request)
+						pstream.println(request);
 						break;
 					case 3:
 						// List command
 						request = "LIST ALL " + RFCnum + request;
-						pstream.println(request)
+						pstream.println(request);
 						break;
 					case 4:
 						// Get command

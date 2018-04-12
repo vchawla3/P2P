@@ -6,36 +6,19 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
-public class ClientThread implements Thread {
+public class ClientThread extends Thread {
 	int port;
-	public MyRunnable(String port) {
-       this.port = Integer.parseInt(port);
+
+	public ClientThread(int port) {
+       this.port = port;
 	}
 
 	public void run() {
 		BufferedReader in;
 		PrintStream pstream;
-		Scanner scan;
 		try {
-			Socket p2psocket = new Socket(host, port);
-			in = new BufferedReader(new InputStreamReader(csocserversocketket.getInputStream()));
-			pstream = new PrintStream(serversocket.getOutputStream());
-			System.out.println("Your Client Connected to Server");
-			// Setup scanner for user input
-			scan = new Scanner(System.in);
-
-			//Now as setup with Server, first pass host and port of yourself
-			System.out.print("Enter your hostname: ");
-			String host = scan.nextLine();
-			System.out.print("Enter your port num: ");
-			String port = scan.nextLine();
-
-			//Pass it to server
-			pstream.println(host);
-			pstream.println(port);
-
-			//After successful connection, spawn thread for P2P incoming connections
-			new Thread(new ClientThread(sock)).start();
+			ServerSocket p2psocket = new ServerSocket(port);
+			Socket peersocket = p2psocket.accept();
 
 			while (true) {
 				//Manage requests from the user to the server
