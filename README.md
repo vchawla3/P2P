@@ -7,5 +7,6 @@ Shikar Sharma (ssharm29)
 `javac *.java`
 
 ### Running the Program
-* Server: `java Server`  
+* Server: `java Server`
+** sublist?
 * Client: `java Client [serverIP] [serverPort]`
