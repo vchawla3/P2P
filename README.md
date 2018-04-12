@@ -3,7 +3,7 @@ Vaibhav Chawla (vchawla3)
 Shikar Sharma (ssharm29)
 
 ### Compilation Instructions
-`cd src/p2p;`  
+`cd src/p2p`  
 `javac *.java`
 
 ### Running the Program
