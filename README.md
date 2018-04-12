@@ -7,5 +7,5 @@ Shikar Sharma (ssharm29)
 `javac *.java`
 
 ### Running the Program
-* Server: `java Server`
+* Server: `java Server`  
 * Client: `java Client [serversip] [serversport]`
