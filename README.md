@@ -8,5 +8,12 @@ Shikar Sharma (ssharm29)
 
 ### Running the Program
 * Server: `java Server`
-..* sublist?
+  * No interaction, will just print the requests as they come into the server
 * Client: `java Client [serverIP] [serverPort]`
+  * Will ask for input on what the clients host and port is (to setup sockets for incoming peers)
+  * Then a menu of 5 options will appear
+    1. Add
+    2. Lookup
+    3. List
+    4. Get
+    5. Quit
