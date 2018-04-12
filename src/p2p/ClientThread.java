@@ -1,5 +1,3 @@
-package p2p;
-
 import java.io.IOException;
 import java.io.*;
 import java.net.ServerSocket;
@@ -21,11 +19,11 @@ public class ClientThread extends Thread {
 			Socket peersocket = p2psocket.accept();
 
 			while (true) {
-				//Manage requests from the user to the server
+				//Manage requests from the peers
 
 			}	
 		} catch (IOException ex) {
-				System.out.println("Could not accept server");
+				System.out.println("Could not accept peers");
 				System.out.println(ex.getMessage());
 		}
 	}

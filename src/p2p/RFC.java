@@ -1,5 +1,3 @@
-package p2p;
-
 public class RFC {
 	int type;
 	String title;

@@ -1,5 +1,3 @@
-package p2p;
-
 import java.io.IOException;
 import java.io.*;
 import java.net.ServerSocket;
@@ -7,6 +5,10 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 public class Server implements Runnable {
+	static ArrayList<Peer> peers;
+	static ArrayList<RFC> rfcs;
+
+
 	static Socket csocket;
 	Server(Socket csocket) {
 		this.csocket = csocket;
@@ -16,6 +18,8 @@ public class Server implements Runnable {
 		try {
 			ServerSocket ssock = new ServerSocket(7734);
 			System.out.println("Listening on port 7734");
+			peers = new ArrayList<Peer>();
+			rfcs = new ArrayList<RFC>();
 
 			while (true) {
 				Socket sock = ssock.accept();
@@ -28,8 +32,7 @@ public class Server implements Runnable {
 		}	
 	}
 
-	static ArrayList<Peer> peers;
-	static ArrayList<RFC> rfcs;
+
 
 	//Each client is now given this thread on the server
 	public void run() {
@@ -48,8 +51,6 @@ public class Server implements Runnable {
 			while(true) {
 				//switch on the command from the client
 				String cmdLine = in.readLine();
-
-				System.out.println(cmdLine);
 				
 				String cmd = cmdLine.split(" ")[0];
 				// error checking here if cmd exists
@@ -141,6 +142,7 @@ public class Server implements Runnable {
 		if (postsplit[0].equals("Port:")) {
 			port = postsplit[1];
 		} else {
+			
 			return badRequest();
 		}
 
@@ -155,7 +157,9 @@ public class Server implements Runnable {
 		//No errors up to here, so now add the rfc to master index and send back 200 OK response
 		RFC r = new RFC(type, title, host);
 		rfcs.add(r);
-		return "P2P-CI/1.0 200 OK\n" + "RFC" + type + " " + title + " " + host + " " + port + "\n";
+
+		//append End Of Request so client knows this is the end
+		return "P2P-CI/1.0 200 OK\n" + "RFC" + type + " " + title + " " + host + " " + port + "\nEOR" ;
 	}
 
 	public String handleLookup(String cmdLine, String hostLine, String portLine, String titleLine) {
@@ -172,6 +176,7 @@ public class Server implements Runnable {
 		if (cmdsplit[3].equals("P2P-CI/1.0")) {
 			type = Integer.parseInt(cmdsplit[2]);
 		} else {
+			System.out.println("bad type");
 			return badRequest();
 		}
 
@@ -180,6 +185,7 @@ public class Server implements Runnable {
 		if (hostsplit[0].equals("Host:")) {
 			host = hostsplit[1];
 		} else {
+			System.out.println("bad host");
 			return badRequest();
 		}
 
@@ -188,6 +194,7 @@ public class Server implements Runnable {
 		if (postsplit[0].equals("Port:")) {
 			port = postsplit[1];
 		} else {
+			System.out.println("bad Port");
 			return badRequest();
 		}
 
@@ -196,6 +203,7 @@ public class Server implements Runnable {
 		if (titlesplit[0].equals("Title")) {
 			title = titlesplit[1];
 		} else {
+			System.out.println("bad title");
 			return badRequest();
 		}
 
@@ -214,7 +222,8 @@ public class Server implements Runnable {
 			}
 		}
 
-		return response;
+		//append End Of Request so client knows this is the end
+		return response + "EOR";
 	}
 
 	public String handleList(String cmdLine, String hostLine, String portLine)  {
@@ -256,20 +265,21 @@ public class Server implements Runnable {
 			}
 		}
 
-		return response;
+		//append End Of Request so client knows this is the end
+		return response + "EOR";
 
 	}
 
 	public String badRequest() {
-		return "P2P-CI/1.0 400 Bad Request";
+		return "P2P-CI/1.0 400 Bad Request\nEOR";
 	}
 
 	public String notFound() {
-		return "P2P-CI/1.0 404 Not Found";
+		return "P2P-CI/1.0 404 Not Found\nEOR";
 	}
 
 	public String versionNotSupported() {
-		return "P2P-CI/1.0 505 P2P-CI Version Not Supported";
+		return "P2P-CI/1.0 505 P2P-CI Version Not Supported\nEOR";
 	}
 
 	

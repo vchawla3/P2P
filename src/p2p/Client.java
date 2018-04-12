@@ -1,5 +1,3 @@
-package p2p;
-
 import java.io.IOException;
 import java.io.*;
 import java.net.ServerSocket;
@@ -43,7 +41,7 @@ public class Client implements Runnable {
 			boolean loop = true;
 			while (loop) {
 				//remake string for the request
-				String request = " P2P-CI/1.0\n" + "Host: " + host + "\n" + "Port: " + port + "\n";
+				String request = " P2P-CI/1.0\n" + "Host: " + host + "\n" + "Port: " + port;
 
 				//Manage requests from the user to the server, and user to other peers
 				System.out.println("Choose one of the following commands: ");
@@ -53,18 +51,19 @@ public class Client implements Runnable {
 				System.out.println("4: GET ");
 				System.out.println("5: QUIT ");
 
-				int cmd = scan.nextInt();
+				int cmd = Integer.parseInt(scan.nextLine());
 				String RFCnum = "";
 				String RFCtitle = "";
 				switch(cmd) {
 					case 1:
 						//Add command
-						System.out.print("Enter RFC Number to Add to Server: ");
+						System.out.println("Enter RFC Number to Add to Server: ");
 						RFCnum = scan.nextLine();
-						System.out.print("Enter RFC Title to Add to Server: ");
+
+						System.out.println("Enter RFC Title to Add to Server: ");
 						RFCtitle = scan.nextLine();
 
-						request = "ADD RFC " + RFCnum + request + "Title: " + RFCtitle;
+						request = "ADD RFC " + RFCnum + request + "\n" + "Title: " + RFCtitle;
 						pstream.println(request);
 						break;
 					case 2:
@@ -74,12 +73,15 @@ public class Client implements Runnable {
 						System.out.print("Enter RFC Title to Lookup on Server: ");
 						RFCtitle = scan.nextLine();
 
-						request = "LOOKUP RFC " + RFCnum + request + "Title: " + RFCtitle;
+						request = "LOOKUP RFC " + RFCnum + request + "\n" + "Title: " + RFCtitle;
 						pstream.println(request);
 						break;
 					case 3:
 						// List command
-						request = "LIST ALL " + RFCnum + request;
+						request = "LIST ALL" + request;
+						System.out.println("~~~~");
+						System.out.println(request);
+						System.out.println("~~~~");
 						pstream.println(request);
 						break;
 					case 4:
@@ -94,7 +96,7 @@ public class Client implements Runnable {
 				if (loop) {
 					//Print the entire response!!
 					String response;
-					while ((response = in.readLine()) != null) {
+					while (!(response = in.readLine()).equals("EOR")) {
 					   System.out.println(response);
 					}					
 				}

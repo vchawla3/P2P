@@ -1,5 +1,3 @@
-package p2p;
-
 public class Peer {
 	int port;
 	String host;
