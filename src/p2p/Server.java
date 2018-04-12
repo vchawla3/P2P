@@ -8,7 +8,6 @@ public class Server implements Runnable {
 	static ArrayList<Peer> peers;
 	static ArrayList<RFC> rfcs;
 
-
 	static Socket csocket;
 	Server(Socket csocket) {
 		this.csocket = csocket;
@@ -31,8 +30,6 @@ public class Server implements Runnable {
 				System.out.println(ex.getMessage());
 		}	
 	}
-
-
 
 	//Each client is now given this thread on the server
 	public void run() {

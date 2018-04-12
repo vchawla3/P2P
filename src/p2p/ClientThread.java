@@ -12,19 +12,16 @@ public class ClientThread extends Thread {
 	}
 
 	public void run() {
-		BufferedReader in;
-		PrintStream pstream;
 		try {
 			ServerSocket p2psocket = new ServerSocket(port);
-			Socket peersocket = p2psocket.accept();
-
 			while (true) {
 				//Manage requests from the peers
-
-			}	
+				Socket peersocket = p2psocket.accept();
+				new Thread(new PeerThread(peersocket)).start();
+			}
 		} catch (IOException ex) {
-				System.out.println("Could not accept peers");
-				System.out.println(ex.getMessage());
+				//System.out.println("Client Thread: Could not accept peers!!");
+				//System.out.println(ex.getMessage());
 		}
 	}
 }

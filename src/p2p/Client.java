@@ -5,8 +5,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.*;
 
-public class Client implements Runnable {
-
+public class Client {
 	// Command Line arguments will include the server's host and port number
 	public static void main(String args[]) {
 		BufferedReader in;
@@ -26,7 +25,7 @@ public class Client implements Runnable {
 			//Now setup with Server, first pass host and port of yourself
 			System.out.print("Enter your hostname: ");
 			String host = scan.nextLine();
-			System.out.print("Enter your port num: ");
+			System.out.print("Enter your port num (> 1024): ");
 			String port = scan.nextLine();
 
 			//Pass it to server
@@ -40,7 +39,7 @@ public class Client implements Runnable {
 			
 			boolean loop = true;
 			while (loop) {
-				//remake string for the request
+				//remake string for most of the requests (add, lookup, and list)
 				String request = " P2P-CI/1.0\n" + "Host: " + host + "\n" + "Port: " + port;
 
 				//Manage requests from the user to the server, and user to other peers
@@ -57,10 +56,10 @@ public class Client implements Runnable {
 				switch(cmd) {
 					case 1:
 						//Add command
-						System.out.println("Enter RFC Number to Add to Server: ");
+						System.out.print("Enter RFC Number to Add to Server: ");
 						RFCnum = scan.nextLine();
 
-						System.out.println("Enter RFC Title to Add to Server: ");
+						System.out.print("Enter RFC Title to Add to Server: ");
 						RFCtitle = scan.nextLine();
 
 						request = "ADD RFC " + RFCnum + request + "\n" + "Title: " + RFCtitle;
@@ -70,6 +69,7 @@ public class Client implements Runnable {
 						// Lookup command
 						System.out.print("Enter RFC Number to Lookup on Server: ");
 						RFCnum = scan.nextLine();
+
 						System.out.print("Enter RFC Title to Lookup on Server: ");
 						RFCtitle = scan.nextLine();
 
@@ -79,13 +79,26 @@ public class Client implements Runnable {
 					case 3:
 						// List command
 						request = "LIST ALL" + request;
-						System.out.println("~~~~");
-						System.out.println(request);
-						System.out.println("~~~~");
 						pstream.println(request);
 						break;
 					case 4:
 						// Get command
+						System.out.print("Enter RFC Number to download from peer: ");
+						RFCnum = scan.nextLine();
+
+						System.out.print("Enter Host of the peer: ");
+						String peerHost = scan.nextLine();
+
+						System.out.print("Enter Port of the peer: ");
+						String peerPort = scan.nextLine();
+
+						System.out.print("Enter Title you want to name this RFC: ");
+						String newTitle = scan.nextLine();
+						//Get OS
+						String os = System.getProperty("os.name");
+
+						request = "GET RFC " + RFCnum + " P2P-CI/1.0\nHost: " + peerHost + "\nOS: " + os;
+						handleRequestToPeer(request, peerHost, peerPort, newTitle);
 						break;
 					case 5:
 						// Leave!!!!
@@ -112,8 +125,54 @@ public class Client implements Runnable {
 		}
 	}
 
-	public void run() {
 
+	public static void handleRequestToPeer(String request, String peerHost, String peerPort, String newTitle) {
+		try {
+			//Open socket to this peer
+			Socket peersocket = new Socket(peerHost, Integer.parseInt(peerPort));
+			BufferedReader peerin = new BufferedReader(new InputStreamReader(peersocket.getInputStream()));
+			PrintStream peerpstream = new PrintStream(peersocket.getOutputStream());
+			
+			//Send request
+			peerpstream.println(request);
 
+			//Get Response that looks like...
+			// P2P-CI/1.0 200 OK
+			// Date: Wed, 12 Feb 2009 15:12:05 GMT
+			// OS: Mac OS 10.2.1
+			// Last-Modified: Thu, 21 Jan 2001 9:23:46 GMT
+			// Content-Length: 12345
+			// Content-Type: text/text
+			// (data data data ...) 
+			String data = peerin.readLine();
+			if (data.split(" ")[1].equals("200")) {
+				peerin.readLine();
+				peerin.readLine();
+				peerin.readLine();
+				peerin.readLine();
+
+				//write the file!!
+				FileOutputStream newrfc = new FileOutputStream(newTitle);
+				int i;
+				do {
+					i = peerin.read();
+		      if (i != -1) {
+		          newrfc.write((char) i);
+		      }
+				} while (i != -1);
+				newrfc.close();
+			} else {
+				//bad response, print the error
+				System.out.print(data);
+			}
+
+			//Close the peersocket stuff
+			peerin.close();
+			peerpstream.close();
+			peersocket.close();
+		} catch (IOException ex) {
+				System.out.println("Could not create peer2peer connection to get RFC");
+				System.out.println(ex.getMessage());
+		}
 	}
 }
