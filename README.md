@@ -8,5 +8,5 @@ Shikar Sharma (ssharm29)
 
 ### Running the Program
 * Server: `java Server`
-** sublist?
+..* sublist?
 * Client: `java Client [serverIP] [serverPort]`
