@@ -118,7 +118,7 @@ public class Server implements Runnable {
 	}
 
 	//Remove peer from peer list and also remove any rfcs stored for this peer
-	public void clientLeft(int port, String host){
+	public synchronized void clientLeft(int port, String host){
 		for(int i = 0; i < peers.size(); i++){
 			Peer peer = peers.get(i);
 			if(peer.host.equals(host) && peer.port == port) {
