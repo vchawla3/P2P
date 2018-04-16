@@ -35,13 +35,15 @@ public class Server implements Runnable {
 	public void run() {
 		BufferedReader in;
 		PrintStream pstream;
+		int port = 0;
+		String host = "";
 		try {
 			//DataInputStream dis= new DataInputStream(csocket.getInputStream());
 			in = new BufferedReader(new InputStreamReader(csocket.getInputStream()));
 			pstream = new PrintStream(csocket.getOutputStream());
 
-			String host = in.readLine();
-			int port = Integer.parseInt(in.readLine());
+			host = in.readLine();
+			port = Integer.parseInt(in.readLine());
 			Peer p = new Peer(port, host);
 			peers.add(p);
 
@@ -99,16 +101,37 @@ public class Server implements Runnable {
 		catch (IOException ex) {
 			System.out.println(ex.getMessage());
 		}
+		catch (NullPointerException ex) {
+			clientLeft(port, host);
+		}
 		finally {
 			try {
 				csocket.close();
 			} catch (IOException e) {
 				e.printStackTrace();
+				System.out.println("thread is gone");
+				System.out.println(host);
+				System.out.println(port);
 			}
          			
 		}
 	}
 
+	//Remove peer from peer list and also remove any rfcs stored for this peer
+	public void clientLeft(int port, String host){
+		for(int i = 0; i < peers.size(); i++){
+			Peer peer = peers.get(i);
+			if(peer.host.equals(host) && peer.port == port) {
+				peers.remove(i);
+			}
+		}
+		for(int i = 0; i < rfcs.size(); i++){
+			RFC rfc = rfcs.get(i);
+			if(rfc.host.equals(host)) {
+				rfcs.remove(i);
+			}
+		}
+	}
 	public String handleAddRFC(String cmdLine, String hostLine, String portLine, String titleLine) {
 		// request looks like...
 		// ADD RFC 123 P2P-CI/1.0

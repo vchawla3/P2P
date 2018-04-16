@@ -1,4 +1,4 @@
-# CSC 573 IP Project 1 - P2P-CI Server
+# CSC 573 IP Project 1 - P2P-CI System
 Vaibhav Chawla (vchawla3)  
 Shikhar Sharma (ssharm29)
 
@@ -20,8 +20,9 @@ Shikhar Sharma (ssharm29)
 
 ### Assumptions 
 * System runs java8
-* The 'title' of RFC's will also be their file name where they are stored
-* RFC's may have the same RFC Number, but different titles/filenames on the various clients
+* The filename of RFC's will be in the format rfc[RFC Number].txt
+* The client will have to manually 'ADD' their rfcs to the server when they first start the program
+* RFC text files are in the same directory as the client
 
 
 ### ToDO

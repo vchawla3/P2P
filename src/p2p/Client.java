@@ -39,6 +39,7 @@ public class Client {
 			
 			boolean loop = true;
 			while (loop) {
+				boolean wasNotGet = true;
 				//remake string for most of the requests (add, lookup, and list)
 				String request = " P2P-CI/1.0\n" + "Host: " + host + "\n" + "Port: " + port;
 
@@ -92,13 +93,14 @@ public class Client {
 						System.out.print("Enter Port of the peer: ");
 						String peerPort = scan.nextLine();
 
-						System.out.print("Enter Title you want to name this RFC: ");
-						String newTitle = scan.nextLine();
 						//Get OS
 						String os = System.getProperty("os.name");
 
 						request = "GET RFC " + RFCnum + " P2P-CI/1.0\nHost: " + peerHost + "\nOS: " + os;
-						handleRequestToPeer(request, peerHost, peerPort, newTitle);
+						handleRequestToPeer(request, peerHost, peerPort, RFCnum);
+
+						//set to false so input buffer does keep reading in below
+						wasNotGet = false;
 						break;
 					case 5:
 						// Leave!!!!
@@ -106,7 +108,7 @@ public class Client {
 						break;
 				}
 
-				if (loop) {
+				if (loop && wasNotGet) {
 					//Print the entire response!!
 					String response;
 					while (!(response = in.readLine()).equals("EOR")) {
@@ -119,6 +121,7 @@ public class Client {
 			in.close();
 			pstream.close();
 			serversocket.close();
+			System.exit(0);
 		} catch (IOException ex) {
 				System.out.println("Could not create server connection");
 				System.out.println(ex.getMessage());
@@ -126,7 +129,7 @@ public class Client {
 	}
 
 
-	public static void handleRequestToPeer(String request, String peerHost, String peerPort, String newTitle) {
+	public static void handleRequestToPeer(String request, String peerHost, String peerPort, String RFCnum) {
 		try {
 			//Open socket to this peer
 			Socket peersocket = new Socket(peerHost, Integer.parseInt(peerPort));
@@ -146,21 +149,23 @@ public class Client {
 			// (data data data ...) 
 			String data = peerin.readLine();
 			if (data.split(" ")[1].equals("200")) {
-				peerin.readLine();
-				peerin.readLine();
-				peerin.readLine();
-				peerin.readLine();
+				System.out.println(peerin.readLine());
+				System.out.println(peerin.readLine());
+				System.out.println(peerin.readLine());
+				System.out.println(peerin.readLine());
+				System.out.println(peerin.readLine());
 
 				//write the file!!
-				FileOutputStream newrfc = new FileOutputStream(newTitle);
-				int i;
-				do {
-					i = peerin.read();
-		      if (i != -1) {
-		          newrfc.write((char) i);
-		      }
-				} while (i != -1);
-				newrfc.close();
+				String newTitle = "rfc" + RFCnum + ".txt";
+				FileWriter fw = new FileWriter(newTitle);
+				String i = peerin.readLine();
+				//special indicator which RFC file would not have
+				while(!i.equals("@EOR@")) {
+					fw.write(i);
+					i = peerin.readLine();
+				}
+				fw.close();
+				System.out.println("RFC File Downloaded!");
 			} else {
 				//bad response, print the error
 				System.out.print(data);
@@ -171,8 +176,9 @@ public class Client {
 			peerpstream.close();
 			peersocket.close();
 		} catch (IOException ex) {
-				System.out.println("Could not create peer2peer connection to get RFC");
-				System.out.println(ex.getMessage());
+			System.out.println("Could not create peer2peer connection to get RFC");
+			System.out.println(ex.getMessage());
 		}
+		return;
 	}
 }

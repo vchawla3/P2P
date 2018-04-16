@@ -3,6 +3,8 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class PeerThread extends Thread {
 	Socket psocket;
@@ -28,7 +30,7 @@ public class PeerThread extends Thread {
 			String[] ossplit = os.split(":");
 
 			// error checking
-			if (!cmdsplit[0].equals("GET") || !cmdsplit[1].equals("RFC") || !hostsplit[0].equals("HOST") || !ossplit[0].equals("OS")) {
+			if (!cmdsplit[0].equals("GET") || !cmdsplit[1].equals("RFC") || !hostsplit[0].equals("Host:") || !ossplit[0].equals("OS")) {
 				//send bad request the response to the peer
 				pstream.println(badRequest());
 			} else if (!cmdsplit[3].equals("P2P-CI/1.0")) {
@@ -36,8 +38,37 @@ public class PeerThread extends Thread {
 				pstream.println(versionNotSupported());
 			}
 
-			
+			// Add appropriate headers
+			String RFCnum = cmdsplit[2];
+			String filename = "rfc" + RFCnum + ".txt";
+			File rfcFile = new File(filename);
 
+			SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+			Date date = new Date();
+
+			pstream.println("P2P-CI/1.0 200 OK");
+			pstream.println("Date: " + sdf.format(date));
+			pstream.println("OS: " + System.getProperty("os.name"));
+			pstream.println("Last-Modified: " + sdf.format(rfcFile.lastModified()));
+			pstream.println("Content-Length: " + rfcFile.length());
+			pstream.println("Content-Type: text/text");
+			
+			//write file data while the file exists
+			try {
+				BufferedReader br = new BufferedReader(new FileReader(rfcFile));
+				for(String line; (line = br.readLine()) != null; ) {
+					System.out.println(line);
+        	pstream.println(line);
+    		}
+				br.close();
+				//special indicator which RFC file would not have
+				pstream.println("@EOR@");
+				pstream.close();
+			} catch (FileNotFoundException ex) {
+				System.out.println("Could not Find the requested file!");
+				//System.out.println(ex.getMessage());
+				pstream.println(notFound());
+			}
 		} catch (IOException ex) {
 			System.out.println("Could not accept peers");
 			System.out.println(ex.getMessage());
