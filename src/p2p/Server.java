@@ -109,9 +109,6 @@ public class Server implements Runnable {
 				csocket.close();
 			} catch (IOException e) {
 				e.printStackTrace();
-				System.out.println("thread is gone");
-				System.out.println(host);
-				System.out.println(port);
 			}
          			
 		}
