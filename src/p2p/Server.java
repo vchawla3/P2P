@@ -8,6 +8,7 @@ public class Server implements Runnable {
 	static ArrayList<Peer> peers;
 	static ArrayList<RFC> rfcs;
 
+	//dont make this static ya dummy
 	Socket csocket;
 	Server(Socket csocket) {
 		this.csocket = csocket;
