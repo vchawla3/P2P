@@ -103,6 +103,7 @@ public class Server implements Runnable {
 		}
 		catch (NullPointerException ex) {
 			clientLeft(port, host);
+
 		}
 		finally {
 			try {
@@ -128,6 +129,7 @@ public class Server implements Runnable {
 				rfcs.remove(i);
 			}
 		}
+		System.out.println("Client at " + host + " on port " + port + " Disconnected");
 	}
 	public String handleAddRFC(String cmdLine, String hostLine, String portLine, String titleLine) {
 		// request looks like...

@@ -8,7 +8,7 @@ Shikhar Sharma (ssharm29)
 
 ### Running the Program
 * Server: `java Server`
-  * No interaction, will just print the requests as they come into the server
+  * No interaction, will just print once a client connects and disconnects
   * Runs the server on localhost
 * Client: `java Client [serverHost] [serverPort]`
   * Then the program will ask for input on what the clients host and port is (to setup sockets for incoming peers)
