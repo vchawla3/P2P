@@ -14,15 +14,15 @@ Shikhar Sharma (ssharm29)
   * Then the program will ask for input on what the clients host and port is (to setup sockets for incoming peers)
   * Then a menu of 5 options will appear, user will select one by entering a value (1-5) and clicking 'enter'
     1. Add
-      * Will ask for rfc number and title to add to CI on the server
+        * Will ask for rfc number and title to add to CI on the server
     2. Lookup
-      * Will ask for rfc number and title to search the CI on the server and return corresponding entry if found
+        * Will ask for rfc number and title to search the CI on the server and return corresponding entry if found
     3. List
-      * Will simply return all rfcs stored on CI server
+        * Will simply return all rfcs stored on CI server
     4. Get
-      * Will ask for rfc number to download, and the host/port of the peer who has it. Will download the txt file and output 'RFC File Downloaded!' once completed
+        * Will ask for rfc number to download, and the host/port of the peer who has it. Will download the txt file and output 'RFC File Downloaded!' once completed
     5. Quit
-      * Will exit the program
+        * Will exit the program
 
 ### Assumptions 
 * System runs java8
