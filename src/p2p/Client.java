@@ -44,7 +44,7 @@ public class Client {
 				String request = " P2P-CI/1.0\n" + "Host: " + host + "\n" + "Port: " + port;
 
 				//Manage requests from the user to the server, and user to other peers
-				System.out.println("Choose one of the following commands: ");
+				System.out.println("Choose one of the following commands (enter 1-5): ");
 				System.out.println("1: ADD");
 				System.out.println("2: LOOKUP ");
 				System.out.println("3: LIST ");
