@@ -120,7 +120,7 @@ public class Client {
 			scan.close();
 			in.close();
 			pstream.close();
-			serversocket.close();
+			//serversocket.close();
 			System.exit(0);
 		} catch (IOException ex) {
 				System.out.println("Could not create server connection");
@@ -160,7 +160,7 @@ public class Client {
 				FileWriter fw = new FileWriter(newTitle);
 				String i = peerin.readLine();
 				//special indicator which RFC file would not have
-				while(!i.equals("@EOR@")) {
+				while(!i.equals("EOR")) {
 					fw.write(i);
 					i = peerin.readLine();
 				}

@@ -38,31 +38,32 @@ public class PeerThread extends Thread {
 				pstream.println(versionNotSupported());
 			}
 
-			// Add appropriate headers
+
 			String RFCnum = cmdsplit[2];
 			String filename = "rfc" + RFCnum + ".txt";
-			File rfcFile = new File(filename);
-
-			SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-			Date date = new Date();
-
-			pstream.println("P2P-CI/1.0 200 OK");
-			pstream.println("Date: " + sdf.format(date));
-			pstream.println("OS: " + System.getProperty("os.name"));
-			pstream.println("Last-Modified: " + sdf.format(rfcFile.lastModified()));
-			pstream.println("Content-Length: " + rfcFile.length());
-			pstream.println("Content-Type: text/text");
 			
+
 			//write file data while the file exists
 			try {
+				File rfcFile = new File(filename);
 				BufferedReader br = new BufferedReader(new FileReader(rfcFile));
+				SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+				Date date = new Date();
+
+				// Add appropriate headers
+				pstream.println("P2P-CI/1.0 200 OK");
+				pstream.println("Date: " + sdf.format(date));
+				pstream.println("OS: " + System.getProperty("os.name"));
+				pstream.println("Last-Modified: " + sdf.format(rfcFile.lastModified()));
+				pstream.println("Content-Length: " + rfcFile.length());
+				pstream.println("Content-Type: text/text");
 				for(String line; (line = br.readLine()) != null; ) {
 					System.out.println(line);
         	pstream.println(line);
     		}
 				br.close();
 				//special indicator which RFC file would not have
-				pstream.println("@EOR@");
+				pstream.println("EOR");
 				pstream.close();
 			} catch (FileNotFoundException ex) {
 				System.out.println("Could not Find the requested file!");

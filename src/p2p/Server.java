@@ -8,7 +8,7 @@ public class Server implements Runnable {
 	static ArrayList<Peer> peers;
 	static ArrayList<RFC> rfcs;
 
-	static Socket csocket;
+	Socket csocket;
 	Server(Socket csocket) {
 		this.csocket = csocket;
 	}
@@ -99,6 +99,7 @@ public class Server implements Runnable {
 			//pstream.close();
 		}
 		catch (IOException ex) {
+			ex.printStackTrace();
 			System.out.println(ex.getMessage());
 		}
 		catch (NullPointerException ex) {
