@@ -10,7 +10,7 @@ Shikhar Sharma (ssharm29)
 * Server: `java Server`
   * No interaction, will just print the requests as they come into the server
   * Runs the server on localhost
-* Client: `java Client [serverIP] [serverPort]`
+* Client: `java Client [serverHost] [serverPort]`
   * Then the program will ask for input on what the clients host and port is (to setup sockets for incoming peers)
   * Then a menu of 5 options will appear, user will select one by entering a value (1-5) and clicking 'enter'
     1. Add
