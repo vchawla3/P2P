@@ -229,22 +229,28 @@ public class Server implements Runnable {
 		}
 
 		String response = "P2P-CI/1.0 200 OK\n";
+		boolean found = false;
 		//No errors so now look for Peers's with the same RFC num and Title
 		for (RFC rfc: rfcs) {
 		//for each RFC, is it the same one from the request
 			if (rfc.type == type && rfc.title.equals(title)) {
-				//for the correct, RFC, which peers have it!!
+				found = true;
+				//for the correct RFC, which peers have it!!
 				for(Peer peer: peers) {
 					if(rfc.host.equals(peer.host)) {
 						response += "RFC " + rfc.type + " " + rfc.title + " " + peer.host + " " + peer.port + "\n";
 					}
-				}
-				
+				}	
 			}
 		}
 
 		//append End Of Request so client knows this is the end
-		return response + "EOR";
+		if (found) {
+			return response + "EOR";
+		} else {
+			//there was no matching rfc found, so return not found message
+			return notFound();
+		}
 	}
 
 	public String handleList(String cmdLine, String hostLine, String portLine)  {

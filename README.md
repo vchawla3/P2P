@@ -29,3 +29,4 @@ Shikhar Sharma (ssharm29)
 * The filename of RFC's will be in the format rfc[RFC Number].txt
 * The client will have to manually 'ADD' their rfcs to the server when they first start the program
 * RFC text files are in the same directory as the client
+* If you do a LOOKUP command, you must get the number and title correct in order for it to be found
