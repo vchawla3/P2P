@@ -58,15 +58,15 @@ public class PeerThread extends Thread {
 				pstream.println("Content-Length: " + rfcFile.length());
 				pstream.println("Content-Type: text/text");
 				for(String line; (line = br.readLine()) != null; ) {
-					System.out.println(line);
-        	pstream.println(line);
-    		}
+					//System.out.println(line);
+        			pstream.println(line);
+    			}
 				br.close();
 				//special indicator which RFC file would not have
 				pstream.println("EOR");
 				pstream.close();
 			} catch (FileNotFoundException ex) {
-				System.out.println("Could not Find the requested file!");
+				//System.out.println("Could not Find the requested file!");
 				//System.out.println(ex.getMessage());
 				pstream.println(notFound());
 			}
