@@ -23,7 +23,8 @@ public class Server implements Runnable {
 
 			while (true) {
 				Socket sock = ssock.accept();
-				System.out.println("Client Connected");
+
+				System.out.println("Client Connected at " + sock.getInetAddress().toString() + " on port " + sock.getPort());
 				new Thread(new Server(sock)).start();
 			}	
 		} catch (IOException ex) {
