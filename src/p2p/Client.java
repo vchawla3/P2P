@@ -167,6 +167,7 @@ public class Client {
 				}
 				fw.close();
 				System.out.println("RFC File Downloaded!");
+				System.out.println();
 			} else {
 				//bad response, print the error
 				System.out.print(data);
