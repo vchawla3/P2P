@@ -5,6 +5,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.SimpleTimeZone;
 
 public class PeerThread extends Thread {
 	Socket psocket;
@@ -47,7 +48,9 @@ public class PeerThread extends Thread {
 			try {
 				File rfcFile = new File(filename);
 				BufferedReader br = new BufferedReader(new FileReader(rfcFile));
-				SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+				SimpleDateFormat sdf = new SimpleDateFormat();
+				sdf.setTimeZone(new SimpleTimeZone(0, "GMT"));
+				sdf.applyPattern("dd MMM yyyy HH:mm:ss z");
 				Date date = new Date();
 
 				// Add appropriate headers
