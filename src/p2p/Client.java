@@ -158,14 +158,15 @@ public class Client {
 
 				//write the file!!
 				String newTitle = "rfc" + RFCnum + ".txt";
-				FileWriter fw = new FileWriter(newTitle);
+				File rfcFile = new File(newTitle);
+				PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(rfcFile)));
 				String i = peerin.readLine();
 				//special indicator which RFC file would not have
 				while(!i.equals("EOR")) {
-					fw.write(i);
+					out.println(i);
 					i = peerin.readLine();
 				}
-				fw.close();
+				out.close();
 				System.out.println("RFC File Downloaded!");
 				System.out.println();
 			} else {

@@ -58,7 +58,7 @@ public class PeerThread extends Thread {
 				pstream.println("Content-Length: " + rfcFile.length());
 				pstream.println("Content-Type: text/text");
 				for(String line; (line = br.readLine()) != null; ) {
-					System.out.println(line);
+					//System.out.println(line);
         			pstream.println(line);
     			}
 				br.close();
