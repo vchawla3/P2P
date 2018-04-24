@@ -167,7 +167,7 @@ public class Client {
 					i = peerin.readLine();
 				}
 				out.close();
-				System.out.println("RFC File Downloaded!");
+				//System.out.println("RFC File Downloaded!");
 				System.out.println();
 			} else {
 				//bad response, print the error
