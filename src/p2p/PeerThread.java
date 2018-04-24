@@ -50,7 +50,7 @@ public class PeerThread extends Thread {
 				BufferedReader br = new BufferedReader(new FileReader(rfcFile));
 				SimpleDateFormat sdf = new SimpleDateFormat();
 				sdf.setTimeZone(new SimpleTimeZone(0, "GMT"));
-				sdf.applyPattern("dd MMM yyyy HH:mm:ss z");
+				sdf.applyPattern("EEE, dd MMM yyyy HH:mm:ss z");
 				Date date = new Date();
 
 				// Add appropriate headers
