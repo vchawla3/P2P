@@ -2,6 +2,8 @@
 Vaibhav Chawla (vchawla3)  
 Shikhar Sharma (ssharm29)
 
+Click [Here](https://github.ncsu.edu/vchawla3/573_P2P) to access ncsu the repository and view the readme in a better format
+
 ### Compilation Instructions
 `cd src/p2p`  
 `javac *.java`

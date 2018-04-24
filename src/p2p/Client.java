@@ -114,6 +114,7 @@ public class Client {
 					while (!(response = in.readLine()).equals("EOR")) {
 					   System.out.println(response);
 					}					
+					System.out.println();
 				}
 			}
 			System.out.println("Goodbye");	
